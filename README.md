@@ -6,7 +6,7 @@ For Development Mode  `npm run build:dev`
 
 Run on a Chromium Based Exprorer
 * `npm run build:prod`
-* After Building project Copy the "Dist" file path. for example: D:\dev\projects\configcius-browser-extension\dist
+* After Building project Copy the "Dist" file path
 * Open Chrome.
 * Type `chrome://extensions/` to the address bar and hit enter button.
 * Click **Developer** Mode which located right top on the page
