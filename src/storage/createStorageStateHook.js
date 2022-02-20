@@ -6,7 +6,7 @@ export default function createStorageStateHook(area, key, initialValue) {
     const consumers = [];
 
     return function useCreateStorageHook() {
-        const [value, setValue, isPersistent, error] = useStorage(area, key, initialValue);
+        const [value, setValue, isPersisted, error] = useStorage(area, key, initialValue);
 
         const setValueAll = useCallback(newValue => {
             for (const consumer of consumers) {
@@ -21,6 +21,6 @@ export default function createStorageStateHook(area, key, initialValue) {
             };
         }, [setValue]);
 
-        return [value, setValueAll, isPersistent, error];
+        return [value, setValueAll, isPersisted, error];
     };
 }

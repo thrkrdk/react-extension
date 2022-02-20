@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {storageLocal, storageSync} from './storage';
 
+
 export default function useStorage(area, key, initialValue) {
     const storage = area === 'local' ? storageLocal : storageSync
 
@@ -10,20 +11,19 @@ export default function useStorage(area, key, initialValue) {
         return typeof initialValue === 'function' ? initialValue() : initialValue;
     });
 
-
     const [state, setState] = useState(INIT_VAL);
-    const [isPersistent, setIsPersistent] = useState(true);
+    const [isPersisted, setIsPersisted] = useState(true); //persisted özelliği ile girilen verilerin gizli pencerede de görüntülenmesini sağlıyoruz.
     const [error, setError] = useState('');
 
     useEffect(() => {
         storage.get(key, INIT_VAL)
             .then(res => {
                 setState(res);
-                setIsPersistent(true);
+                setIsPersisted(true);
                 setError('');
             })
             .catch(error => {
-                setIsPersistent(false);
+                setIsPersisted(false);
                 setError(error);
             });
     }, [key, INIT_VAL]);
@@ -33,11 +33,11 @@ export default function useStorage(area, key, initialValue) {
         setState(toStore);
         storage.set(key, toStore)
             .then(() => {
-                setIsPersistent(true);
+                setIsPersisted(true);
                 setError('');
             })
             .catch(error => {
-                setIsPersistent(false);
+                setIsPersisted(false);
                 setError(error);
             });
     }, [key, state]);
@@ -46,15 +46,15 @@ export default function useStorage(area, key, initialValue) {
         const onChange = (changes, areaName) => {
             if (areaName === AREA && key in changes) {
                 setState(changes[key].newValue);
-                setIsPersistent(true);
+                setIsPersisted(true);
                 setError('');
             }
         };
-        chrome.storage.onChanged.addListener(onChange);
+        chrome.storage.onChanged.addListener(onChange); // chrome.storage api'yi değişiklikleri dinlemesi için ekliyoruz
         return () => {
-            chrome.storage.onChanged.removeListener(onChange);
+            chrome.storage.onChanged.removeListener(onChange); // Bigliler storage'yazıldıktan sonra listener'ı kaldıryoruzç
         };
     }, [AREA, key]);
 
-    return [state, updateValue, isPersistent, error];
+    return [state, updateValue, isPersisted, error];
 }
