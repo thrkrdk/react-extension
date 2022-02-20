@@ -1,4 +1,4 @@
-# Chrome Extention For Jira
+# Chrome Extention For Google With React
 
 To build project for prod `npm run build:prod `
 
