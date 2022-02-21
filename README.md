@@ -11,4 +11,4 @@ Run on a Chromium Based Exprorer
 * Type `chrome://extensions/` to the address bar and hit enter button.
 * Click **Developer** Mode which located right top on the page
 * Click **Load Unpacked Extension** button and paste dist file path
-* Search anything at google and  the button will displayed.
+* Search anything at google and  the button will be displayed.
