@@ -2,7 +2,7 @@ import React from 'react'
 import {useSearchStore, useSetttingsStore} from '../js/useStore';
 
 const CustomButton = () => {
-    const [searchHistory, setSearchHistory] = useSearchStore();
+    const [searchHistory, setSearchHistory] = useSearchStore(); // kullanıcının arama geçmişini kaydedeceği stote bilgsini alıyoruz.
     const [settings] = useSetttingsStore();
 
     const save = () => {
@@ -10,8 +10,8 @@ const CustomButton = () => {
             let hist = searchHistory.history;
             const url = document.URL;
             let searchVal;
-            for (const search of document.getElementsByClassName('gLFyf gsfi')) {
-                searchVal = search.value;
+            for (const search of document.getElementsByClassName('gLFyf gsfi')) { // gogle bu classı değiştirirse bu değer alınayacak. bu kısmın güncellenmesi gerekir.
+                searchVal = search.value; // kullanıcın aramış olduğu değeri alıyoruz.
             }
             hist = [...hist, {searchVal, url}]
             return {
