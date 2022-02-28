@@ -1,60 +1,57 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useReducer, useState} from 'react';
 import {storageLocal, storageSync} from './storage';
-
 
 export default function useStorage(area, key, initialValue) {
     const storage = area === 'local' ? storageLocal : storageSync
-
-    const [AREA] = useState(area);
 
     const [INIT_VAL] = useState(() => {
         return typeof initialValue === 'function' ? initialValue() : initialValue;
     });
 
-    const [state, setState] = useState(INIT_VAL);
-    const [isPersisted, setIsPersisted] = useState(true); //persisted özelliği ile girilen verilerin gizli pencerede de görüntülenmesini sağlıyoruz.
-    const [error, setError] = useState('');
+    const [state, setState] = useReducer(
+        (state, newState) => ({...state, ...newState}),
+        {
+            AREA: area,
+            storageState: INIT_VAL,
+            isPersistent: true,
+            error: ''
+        }
+    )
+    const {AREA, storageState, isPersistent, error} = state;
 
     useEffect(() => {
         storage.get(key, INIT_VAL)
             .then(res => {
-                setState(res);
-                setIsPersisted(true);
-                setError('');
+                setState({storageState: res, isPersistent: true, error: ''});
             })
             .catch(error => {
-                setIsPersisted(false);
-                setError(error);
+                setState({isPersistent: false, error: error});
             });
     }, [key, INIT_VAL]);
 
     const updateValue = useCallback((newValue) => {
-        const toStore = typeof newValue === 'function' ? newValue(state) : newValue;
-        setState(toStore);
+        const toStore = typeof newValue === 'function' ? newValue(storageState) : newValue;
+        setState({storageState: toStore});
         storage.set(key, toStore)
             .then(() => {
-                setIsPersisted(true);
-                setError('');
+                setState({isPersistent: true, error: ''});
             })
             .catch(error => {
-                setIsPersisted(false);
-                setError(error);
+                setState({isPersistent: false, error: error});
             });
-    }, [key, state]);
+    }, [key, storageState]);
 
     useEffect(() => {
         const onChange = (changes, areaName) => {
             if (areaName === AREA && key in changes) {
-                setState(changes[key].newValue);
-                setIsPersisted(true);
-                setError('');
+                setState({storageState: changes[key].newValue, isPersistent: true, error: ''});
             }
         };
-        chrome.storage.onChanged.addListener(onChange); // chrome.storage api'yi değişiklikleri dinlemesi için ekliyoruz
+        chrome.storage.onChanged.addListener(onChange);
         return () => {
-            chrome.storage.onChanged.removeListener(onChange); // Bigliler storage'yazıldıktan sonra listener'ı kaldıryoruzç
+            chrome.storage.onChanged.removeListener(onChange);
         };
     }, [AREA, key]);
 
-    return [state, updateValue, isPersisted, error];
+    return [storageState, updateValue, isPersistent, error];
 }
