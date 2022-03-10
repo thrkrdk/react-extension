@@ -1,24 +1,34 @@
 {
-    "name": "React Extension",
-    "description": "Inject and Store yapısı",
-    "version": "0.1.0",
-    "manifest_version": 2,
+  "name": "React Extension",
+  "description": "Inject and Store yapısı",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "./16.png",
+    "32": "./32.png",
+    "48": "./48.png",
+    "128": "./128.png"
+  },
+  "background": {
+    "service_worker": "./background.js"
+  },
+  "options_page": "./options.html",
+  "action": {
+    "default_popup": "popup.html",
     "icons": {
-        "16": "./16.png",
-        "32": "./32.png",
-        "48": "./48.png",
-        "128": "./128.png"
-    },
-    "background": {
-        "scripts": ["./background.js"]
-    },
-    "options_page": "./options.html",
-    "browser_action": {
-        "default_popup": "popup.html"
-    },
-    "permissions": [
-        "tabs",
-        "storage",
-        "<all_urls>"
-    ]
+      "16": "./16.png",
+      "32": "./32.png",
+      "48": "./48.png",
+      "128": "./128.png"
+    }
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }
